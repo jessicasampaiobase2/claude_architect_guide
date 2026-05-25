@@ -1,274 +1,692 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Certified Architect — Guia de Estudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-  h2.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  *{box-sizing:border-box;margin:0;padding:0}
-  .wrap{font-family:var(--font-sans);padding:1.5rem 0;max-width:680px}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* TABS */
-  .tabs{display:flex;gap:4px;margin-bottom:1.75rem;background:var(--color-background-secondary);padding:4px;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)}
-  .tab{flex:1;padding:8px 4px;border:none;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1.2}
-  .tab i{font-size:16px}
-  .tab.active{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 3px rgba(0,0,0,.08);border:0.5px solid var(--color-border-secondary)}
-  .tab:hover:not(.active){color:var(--color-text-primary)}
-  .panel{display:none}.panel.active{display:block}
+:root {
+  --bg: #0d0e11;
+  --surface: #15171c;
+  --surface2: #1c1f27;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8e9ec;
+  --muted: #7a7e8a;
+  --accent: #c8a97e;
+  --accent2: #8b7bde;
+  --purple: #7F77DD;
+  --green: #4da882;
+  --amber: #c9923e;
+  --blue: #4a8fd4;
+  --pink: #c45e8a;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
 
-  /* STAT CARDS */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
-  .stat{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;text-align:center;border:0.5px solid var(--color-border-tertiary)}
-  .stat-num{font-size:26px;font-weight:500;color:var(--color-text-primary);line-height:1}
-  .stat-lbl{font-size:11px;color:var(--color-text-secondary);margin-top:5px;line-height:1.3}
+html { scroll-behavior: smooth; }
 
-  /* DOMAIN CARDS — overview */
-  .dom-list{display:flex;flex-direction:column;gap:8px}
-  .dom-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;display:grid;grid-template-columns:auto 1fr auto;gap:0 12px;align-items:center}
-  .dom-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
-  .dom-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
-  .dom-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px;line-height:1.4}
-  .dom-pct-badge{font-size:13px;font-weight:500;color:var(--color-text-secondary);white-space:nowrap}
-  .dom-bar-row{grid-column:1/-1;margin-top:10px}
-  .dom-bar-bg{height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
-  .dom-bar-fill{height:100%;border-radius:3px}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-  /* TIP */
-  .tip{border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-top:1rem;border-left:3px solid}
-  .tip-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
-  .tip-txt{font-size:13px;line-height:1.65}
-  .tip-green{background:#E1F5EE;border-color:#1D9E75}
-  .tip-green .tip-lbl{color:#0F6E56}
-  .tip-green .tip-txt{color:#085041}
-  .tip-blue{background:#E6F1FB;border-color:#378ADD}
-  .tip-blue .tip-lbl{color:#185FA5}
-  .tip-blue .tip-txt{color:#0C447C}
-  .tip-amber{background:#FAEEDA;border-color:#EF9F27}
-  .tip-amber .tip-lbl{color:#854F0B}
-  .tip-amber .tip-txt{color:#633806}
+/* NOISE TEXTURE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
 
-  /* WEEK GRID */
-  .wk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem}
-  .wk-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 14px;cursor:pointer;transition:all .15s}
-  .wk-card:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
-  .wk-card.sel{border-color:#378ADD;background:#E6F1FB}
-  .wk-tag{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
-  .wk-card.sel .wk-tag{color:#185FA5}
-  .wk-ttl{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
-  .wk-card.sel .wk-ttl{color:#0C447C}
-  .wk-sub{font-size:11px;color:var(--color-text-secondary)}
-  .wk-card.sel .wk-sub{color:#185FA5}
+/* HERO */
+.hero {
+  padding: 5rem 2rem 3.5rem;
+  max-width: 780px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.12;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
 
-  .wk-detail{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.25rem;border:0.5px solid var(--color-border-tertiary)}
-  .wk-detail-ttl{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:14px;padding-bottom:12px;border-bottom:0.5px solid var(--color-border-tertiary)}
-  .day-row{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
-  .day-row:last-child{border-bottom:none}
-  .day-lbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);padding-top:3px}
-  .day-txt{font-size:13px;color:var(--color-text-primary);line-height:1.5}
-  .pill{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;line-height:1.5}
-  .p-conceito{background:#EEEDFE;color:#534AB7}
-  .p-hands{background:#EAF3DE;color:#3B6D11}
-  .p-mock{background:#FAEEDA;color:#854F0B}
-  .p-revisao{background:#FBEAF0;color:#993556}
+/* STAT ROW */
+.stats {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+.stat {
+  flex: 1;
+  padding: 1.25rem 1rem;
+  background: var(--surface);
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 300;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
 
-  /* DOMAIN DEEP DIVE */
-  .dom-deep{display:flex;flex-direction:column;gap:12px}
-  .dom-deep-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
-  .dom-deep-head{padding:.875rem 1.25rem;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
-  .dom-deep-head:hover{background:var(--color-background-secondary)}
-  .dom-accent{width:4px;border-radius:2px;align-self:stretch;flex-shrink:0}
-  .dom-deep-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
-  .dom-deep-name{font-size:13px;font-weight:500;color:var(--color-text-primary);flex:1}
-  .dom-deep-pct{font-size:13px;color:var(--color-text-secondary)}
-  .dom-chevron{font-size:14px;color:var(--color-text-secondary);transition:transform .2s}
-  .dom-deep-body{display:none;padding:0 1.25rem 1rem;font-size:13px;color:var(--color-text-primary);line-height:1.7;border-top:0.5px solid var(--color-border-tertiary)}
-  .dom-deep-body.open{display:block}
-  .dom-deep-body strong{font-weight:500}
-  .dom-chevron.open{transform:rotate(180deg)}
+/* NAV TABS */
+.nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(13,14,17,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  padding: 0 2rem;
+}
+.nav-btn {
+  padding: 14px 20px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.nav-btn i { font-size: 15px; }
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  /* RESOURCES */
-  .res-section{margin-bottom:1.25rem}
-  .res-sect-lbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .res-sect-lbl i{font-size:14px}
-  .res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .res-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
-  .res-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
-  .res-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:8px}
-  .res-link{font-size:12px;color:#185FA5;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
-  .res-link:hover{text-decoration:underline}
+/* MAIN CONTENT */
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 5rem;
+}
+.panel { display: none; }
+.panel.active { display: block; }
 
-  /* MOCKS */
-  .mock-list{display:flex;flex-direction:column;gap:8px}
-  .mock-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start}
-  .mock-icon-wrap{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .mock-ttl{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
-  .mock-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:8px}
-  .free{background:#EAF3DE;color:#3B6D11;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
-  .paid{background:#FAEEDA;color:#854F0B;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
+/* SECTION LABEL */
+.sect-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+/* DOMAIN CARDS — overview */
+.dom-list { display: flex; flex-direction: column; gap: 2px; }
+.dom-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 0 16px;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border-radius: 0;
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.dom-list .dom-row:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.dom-list .dom-row:last-child { border-radius: 0 0 var(--radius) var(--radius); }
+.dom-row:hover { background: var(--surface2); }
+.dom-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+}
+.dom-name-wrap {}
+.dom-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.dom-topics { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.dom-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--muted);
+}
+.dom-bar { height: 2px; background: rgba(255,255,255,.06); margin-top: .5rem; grid-column: 1/-1; border-radius: 2px; overflow: hidden; }
+.dom-bar-fill { height: 100%; border-radius: 2px; }
+
+/* TIP BOX */
+.tip {
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  margin-top: 1rem;
+  border: 1px solid;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.tip-icon { font-size: 16px; margin-top: 1px; }
+.tip-lbl { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+.tip-txt { font-size: 13px; line-height: 1.65; }
+.tip-amber { background: rgba(201,146,62,.08); border-color: rgba(201,146,62,.2); }
+.tip-amber .tip-lbl { color: var(--amber); }
+.tip-amber .tip-txt { color: #c8aa80; }
+.tip-amber .tip-icon { color: var(--amber); }
+.tip-blue { background: rgba(74,143,212,.08); border-color: rgba(74,143,212,.2); }
+.tip-blue .tip-lbl { color: var(--blue); }
+.tip-blue .tip-txt { color: #94b8d8; }
+.tip-blue .tip-icon { color: var(--blue); }
+.tip-green { background: rgba(77,168,130,.08); border-color: rgba(77,168,130,.2); }
+.tip-green .tip-lbl { color: var(--green); }
+.tip-green .tip-txt { color: #8fc9b2; }
+.tip-green .tip-icon { color: var(--green); }
+
+/* WEEK SELECTOR */
+.wk-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+.wk-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.wk-card:hover { border-color: var(--border2); background: var(--surface2); }
+.wk-card.sel { border-color: rgba(201,146,62,.4); background: rgba(201,146,62,.06); }
+.wk-n {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.wk-card.sel .wk-n { color: var(--accent); }
+.wk-ttl { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; line-height: 1.3; }
+.wk-sub { font-size: 11px; color: var(--muted); }
+
+.wk-detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.wk-detail-head {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+.day-row {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 16px;
+  padding: 12px 1.25rem;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+}
+.day-row:last-child { border-bottom: none; }
+.day-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding-top: 2px;
+}
+.day-txt { font-size: 13px; color: var(--text); line-height: 1.5; }
+.pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .02em;
+}
+.p-conceito { background: rgba(127,119,221,.15); color: #a9a3ef; border: 1px solid rgba(127,119,221,.2); }
+.p-hands { background: rgba(77,168,130,.15); color: #7ec4a8; border: 1px solid rgba(77,168,130,.2); }
+.p-mock { background: rgba(201,146,62,.15); color: #d4aa78; border: 1px solid rgba(201,146,62,.2); }
+.p-revisao { background: rgba(196,94,138,.15); color: #d488aa; border: 1px solid rgba(196,94,138,.2); }
+
+/* DOMAIN ACCORDION */
+.dom-acc { display: flex; flex-direction: column; gap: 6px; }
+.dom-acc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.dom-acc-head {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background .15s;
+  user-select: none;
+}
+.dom-acc-head:hover { background: var(--surface2); }
+.dom-acc-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+.dom-acc-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; }
+.dom-acc-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: var(--muted);
+  margin-right: 8px;
+}
+.dom-chevron { font-size: 14px; color: var(--muted); transition: transform .2s; }
+.dom-chevron.open { transform: rotate(180deg); }
+.dom-acc-body {
+  display: none;
+  padding: 0 1.25rem 1.1rem;
+  font-size: 13px;
+  color: #a0a4b0;
+  line-height: 1.75;
+  border-top: 1px solid var(--border);
+}
+.dom-acc-body.open { display: block; }
+.dom-acc-body strong { font-weight: 500; color: var(--text); }
+.dom-acc-body p { margin-bottom: .6rem; }
+.dom-acc-body p:last-child { margin-bottom: 0; }
+
+/* RESOURCES */
+.res-section { margin-bottom: 1.75rem; }
+.res-head {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: .75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.res-head i { font-size: 13px; }
+.res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.res-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  transition: border-color .15s;
+}
+.res-card:hover { border-color: var(--border2); }
+.res-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.res-desc { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+.res-link {
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  opacity: .8;
+  transition: opacity .15s;
+}
+.res-link:hover { opacity: 1; text-decoration: underline; }
+.res-link i { font-size: 12px; }
+
+/* MOCKS */
+.mock-list { display: flex; flex-direction: column; gap: 8px; }
+.mock-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 14px;
+  align-items: start;
+  transition: border-color .15s;
+}
+.mock-card:hover { border-color: var(--border2); }
+.mock-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.mock-ttl { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.mock-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+.badge-free { background: rgba(77,168,130,.15); color: #7ec4a8; border: 1px solid rgba(77,168,130,.2); font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; font-family: 'DM Mono', monospace; }
+.badge-paid { background: rgba(201,146,62,.15); color: #d4aa78; border: 1px solid rgba(201,146,62,.2); font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; font-family: 'DM Mono', monospace; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero { animation: fadeUp .6s ease both; }
+.stats { animation: fadeUp .6s .1s ease both; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #2a2d36; border-radius: 3px; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2rem; }
+  .stats { flex-wrap: wrap; }
+  .stat { flex-basis: 50%; }
+  .wk-grid { grid-template-columns: 1fr 1fr; }
+  .res-grid { grid-template-columns: 1fr; }
+  .nav { overflow-x: auto; padding: 0 1rem; }
+  .nav-btn { padding: 14px 14px; font-size: 12px; }
+  .main { padding: 2rem 1rem 4rem; }
+  .hero { padding: 3rem 1rem 2rem; }
+}
 </style>
+</head>
+<body>
 
-<h2 class="sr-only">Guia de estudos interativo para a certificação Claude Certified Architect Foundations</h2>
+<div class="hero">
+  <div class="hero-eyebrow">Anthropic Certification</div>
+  <h1>Claude Certified<br><em>Architect</em> Foundations</h1>
+  <p class="hero-sub">Guia completo de estudos — do zero ao certificado em 4 semanas, com plano diário, domínios e recursos curados.</p>
 
-<div class="wrap">
-  <div class="tabs">
-    <button class="tab active" onclick="showP('overview',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i>Visão geral</button>
-    <button class="tab" onclick="showP('plan',this)"><i class="ti ti-calendar" aria-hidden="true"></i>4 semanas</button>
-    <button class="tab" onclick="showP('domains',this)"><i class="ti ti-book" aria-hidden="true"></i>Domínios</button>
-    <button class="tab" onclick="showP('resources',this)"><i class="ti ti-link" aria-hidden="true"></i>Recursos</button>
-    <button class="tab" onclick="showP('mocks',this)"><i class="ti ti-clipboard-check" aria-hidden="true"></i>Mock tests</button>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">60</div>
+      <div class="stat-lbl">Questões</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">120</div>
+      <div class="stat-lbl">Minutos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">720</div>
+      <div class="stat-lbl">Nota mínima</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-lbl">Domínios</div>
+    </div>
   </div>
+</div>
+
+<div class="nav-wrap">
+  <nav class="nav" role="tablist">
+    <button class="nav-btn active" onclick="showP('overview',this)" role="tab"><i class="ti ti-chart-bar" aria-hidden="true"></i>Visão geral</button>
+    <button class="nav-btn" onclick="showP('plan',this)" role="tab"><i class="ti ti-calendar" aria-hidden="true"></i>Plano 4 semanas</button>
+    <button class="nav-btn" onclick="showP('domains',this)" role="tab"><i class="ti ti-book" aria-hidden="true"></i>Domínios</button>
+    <button class="nav-btn" onclick="showP('resources',this)" role="tab"><i class="ti ti-link" aria-hidden="true"></i>Recursos</button>
+    <button class="nav-btn" onclick="showP('mocks',this)" role="tab"><i class="ti ti-clipboard-check" aria-hidden="true"></i>Mock tests</button>
+  </nav>
+</div>
+
+<main class="main">
 
   <!-- OVERVIEW -->
-  <div id="panel-overview" class="panel active">
-    <div class="stats">
-      <div class="stat"><div class="stat-num">60</div><div class="stat-lbl">Questões</div></div>
-      <div class="stat"><div class="stat-num">120</div><div class="stat-lbl">Minutos</div></div>
-      <div class="stat"><div class="stat-num">720</div><div class="stat-lbl">Nota mínima<br>(de 1000)</div></div>
-      <div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Domínios</div></div>
-    </div>
+  <section id="panel-overview" class="panel active">
+    <p class="sect-lbl">Distribuição dos domínios</p>
     <div class="dom-list">
-      <div class="dom-card">
-        <div class="dom-num" style="background:#EEEDFE;color:#534AB7">01</div>
-        <div><div class="dom-name">Agentic Architecture &amp; Orchestration</div><div class="dom-sub">Agentic loops · Multi-agent · Hooks · Session state</div></div>
-        <div class="dom-pct-badge">27%</div>
-        <div class="dom-bar-row"><div class="dom-bar-bg"><div class="dom-bar-fill" style="width:27%;background:#7F77DD"></div></div></div>
+      <div class="dom-row" style="border-left-color:var(--purple)">
+        <div class="dom-icon" style="background:rgba(127,119,221,.12);color:#a9a3ef">01</div>
+        <div class="dom-name-wrap">
+          <div class="dom-name">Agentic Architecture &amp; Orchestration</div>
+          <div class="dom-topics">Agentic loops · Multi-agent · Hooks · Session state · Task decomposition</div>
+        </div>
+        <div class="dom-pct">27%</div>
+        <div class="dom-bar"><div class="dom-bar-fill" style="width:27%;background:var(--purple)"></div></div>
       </div>
-      <div class="dom-card">
-        <div class="dom-num" style="background:#EAF3DE;color:#3B6D11">02</div>
-        <div><div class="dom-name">Claude Code Configuration &amp; Workflows</div><div class="dom-sub">CLAUDE.md · Custom commands · Agent Skills · CI/CD</div></div>
-        <div class="dom-pct-badge">20%</div>
-        <div class="dom-bar-row"><div class="dom-bar-bg"><div class="dom-bar-fill" style="width:20%;background:#639922"></div></div></div>
+      <div class="dom-row" style="border-left-color:var(--green)">
+        <div class="dom-icon" style="background:rgba(77,168,130,.12);color:#7ec4a8">02</div>
+        <div class="dom-name-wrap">
+          <div class="dom-name">Claude Code Configuration &amp; Workflows</div>
+          <div class="dom-topics">CLAUDE.md · Custom commands · Agent Skills · CI/CD · Batch processing</div>
+        </div>
+        <div class="dom-pct">20%</div>
+        <div class="dom-bar"><div class="dom-bar-fill" style="width:20%;background:var(--green)"></div></div>
       </div>
-      <div class="dom-card">
-        <div class="dom-num" style="background:#FAEEDA;color:#854F0B">03</div>
-        <div><div class="dom-name">Prompt Engineering &amp; Structured Output</div><div class="dom-sub">Few-shot · JSON schema · Chain-of-thought · Validation</div></div>
-        <div class="dom-pct-badge">20%</div>
-        <div class="dom-bar-row"><div class="dom-bar-bg"><div class="dom-bar-fill" style="width:20%;background:#EF9F27"></div></div></div>
+      <div class="dom-row" style="border-left-color:var(--amber)">
+        <div class="dom-icon" style="background:rgba(201,146,62,.12);color:#d4aa78">03</div>
+        <div class="dom-name-wrap">
+          <div class="dom-name">Prompt Engineering &amp; Structured Output</div>
+          <div class="dom-topics">Few-shot · JSON schema · Chain-of-thought · Validation loops</div>
+        </div>
+        <div class="dom-pct">20%</div>
+        <div class="dom-bar"><div class="dom-bar-fill" style="width:20%;background:var(--amber)"></div></div>
       </div>
-      <div class="dom-card">
-        <div class="dom-num" style="background:#E6F1FB;color:#185FA5">04</div>
-        <div><div class="dom-name">Tool Design &amp; MCP Integration</div><div class="dom-sub">MCP servers · Tool schemas · Error handling · Built-in tools</div></div>
-        <div class="dom-pct-badge">18%</div>
-        <div class="dom-bar-row"><div class="dom-bar-bg"><div class="dom-bar-fill" style="width:18%;background:#378ADD"></div></div></div>
+      <div class="dom-row" style="border-left-color:var(--blue)">
+        <div class="dom-icon" style="background:rgba(74,143,212,.12);color:#94b8d8">04</div>
+        <div class="dom-name-wrap">
+          <div class="dom-name">Tool Design &amp; MCP Integration</div>
+          <div class="dom-topics">MCP servers · Tool schemas · Error handling · Built-in tools</div>
+        </div>
+        <div class="dom-pct">18%</div>
+        <div class="dom-bar"><div class="dom-bar-fill" style="width:18%;background:var(--blue)"></div></div>
       </div>
-      <div class="dom-card">
-        <div class="dom-num" style="background:#FBEAF0;color:#993556">05</div>
-        <div><div class="dom-name">Context Management &amp; Reliability</div><div class="dom-sub">Context window · Prompt caching · RAG · Escalation</div></div>
-        <div class="dom-pct-badge">15%</div>
-        <div class="dom-bar-row"><div class="dom-bar-bg"><div class="dom-bar-fill" style="width:15%;background:#D4537E"></div></div></div>
+      <div class="dom-row" style="border-left-color:var(--pink)">
+        <div class="dom-icon" style="background:rgba(196,94,138,.12);color:#d488aa">05</div>
+        <div class="dom-name-wrap">
+          <div class="dom-name">Context Management &amp; Reliability</div>
+          <div class="dom-topics">Context window · Prompt caching · RAG patterns · Escalation · Fallbacks</div>
+        </div>
+        <div class="dom-pct">15%</div>
+        <div class="dom-bar"><div class="dom-bar-fill" style="width:15%;background:var(--pink)"></div></div>
       </div>
     </div>
-    <div class="tip tip-blue" style="margin-top:1rem">
-      <div class="tip-lbl">Formato do exame</div>
-      <div class="tip-txt">Fechado, sem IA. 4 de 6 cenários sorteados aleatoriamente. Cada questão te coloca como arquiteto de um sistema real — é raciocínio aplicado, não trivia. Registro via <strong>anthropic.skilljar.com</strong>.</div>
+
+    <div class="tip tip-blue" style="margin-top:1.25rem">
+      <i class="ti ti-info-circle tip-icon" aria-hidden="true"></i>
+      <div>
+        <div class="tip-lbl">Formato do exame</div>
+        <div class="tip-txt">Fechado, sem IA. 4 de 6 cenários são sorteados aleatoriamente. Cada questão te coloca como arquiteto de um sistema real e pede decisões de design — não é trivia, é raciocínio aplicado. Registro via <strong>anthropic.skilljar.com</strong>.</div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <!-- PLAN -->
-  <div id="panel-plan" class="panel">
+  <section id="panel-plan" class="panel">
+    <p class="sect-lbl">Selecione a semana</p>
     <div class="wk-grid">
       <div class="wk-card sel" id="wk1" onclick="selWk(1)">
-        <div class="wk-tag">Semana 1</div>
+        <div class="wk-n">Semana 1</div>
         <div class="wk-ttl">Fundamentos API</div>
         <div class="wk-sub">API + Prompt Eng.</div>
       </div>
       <div class="wk-card" id="wk2" onclick="selWk(2)">
-        <div class="wk-tag">Semana 2</div>
+        <div class="wk-n">Semana 2</div>
         <div class="wk-ttl">MCP &amp; Agentes</div>
         <div class="wk-sub">Tools + Orquestração</div>
       </div>
       <div class="wk-card" id="wk3" onclick="selWk(3)">
-        <div class="wk-tag">Semana 3</div>
+        <div class="wk-n">Semana 3</div>
         <div class="wk-ttl">Claude Code</div>
         <div class="wk-sub">Workflows + Conf.</div>
       </div>
       <div class="wk-card" id="wk4" onclick="selWk(4)">
-        <div class="wk-tag">Semana 4</div>
+        <div class="wk-n">Semana 4</div>
         <div class="wk-ttl">Revisão Final</div>
         <div class="wk-sub">Mocks + Lacunas</div>
       </div>
     </div>
     <div class="wk-detail">
-      <div class="wk-detail-ttl" id="wk-ttl"></div>
+      <div class="wk-detail-head" id="wk-head"></div>
       <div id="wk-days"></div>
     </div>
-  </div>
+  </section>
 
   <!-- DOMAINS DEEP -->
-  <div id="panel-domains" class="panel">
-    <div class="dom-deep">
-      <div class="dom-deep-card">
-        <div class="dom-deep-head" onclick="togDom(this)">
-          <div class="dom-accent" style="background:#7F77DD"></div>
-          <span class="dom-deep-badge" style="background:#EEEDFE;color:#534AB7">27%</span>
-          <span class="dom-deep-name">Agentic Architecture &amp; Orchestration</span>
+  <section id="panel-domains" class="panel">
+    <p class="sect-lbl">Clique para expandir cada domínio</p>
+    <div class="dom-acc">
+      <div class="dom-acc-card">
+        <div class="dom-acc-head" onclick="togDom(this)">
+          <span class="dom-acc-badge" style="background:rgba(127,119,221,.15);color:#a9a3ef;border:1px solid rgba(127,119,221,.2)">27%</span>
+          <span class="dom-acc-name">Agentic Architecture &amp; Orchestration</span>
           <i class="ti ti-chevron-down dom-chevron" aria-hidden="true"></i>
         </div>
-        <div class="dom-deep-body">
-          <p style="margin-bottom:.75rem"><strong>O que estudar:</strong> Ciclo de vida do agentic loop (stop_reason "tool_use" vs "end_turn"), padrões coordinator-subagent, hook interception, session state management, task decomposition.</p>
-          <p style="margin-bottom:.75rem"><strong>Conceitos-chave:</strong> Como o modelo decide qual tool chamar a cada iteração. Como passar contexto entre subagentes. Evitar anti-patterns (loop caps arbitrários, parsing de linguagem natural para terminação). Instâncias independentes de review são mais eficazes que self-review.</p>
+        <div class="dom-acc-body">
+          <p><strong>O que estudar:</strong> Ciclo de vida do agentic loop (stop_reason "tool_use" vs "end_turn"), padrões coordinator-subagent, hook interception, session state management, task decomposition.</p>
+          <p><strong>Conceitos-chave:</strong> Como o modelo decide qual tool chamar a cada iteração. Como passar contexto entre subagentes. Evitar anti-patterns (loop caps arbitrários, parsing de linguagem natural para terminação). Instâncias independentes de review são mais eficazes que self-review.</p>
           <p><strong>Recurso principal:</strong> Curso "Introduction to Subagents" no Skilljar + documentação do Agent SDK.</p>
         </div>
       </div>
-      <div class="dom-deep-card">
-        <div class="dom-deep-head" onclick="togDom(this)">
-          <div class="dom-accent" style="background:#639922"></div>
-          <span class="dom-deep-badge" style="background:#EAF3DE;color:#3B6D11">20%</span>
-          <span class="dom-deep-name">Claude Code Configuration &amp; Workflows</span>
+      <div class="dom-acc-card">
+        <div class="dom-acc-head" onclick="togDom(this)">
+          <span class="dom-acc-badge" style="background:rgba(77,168,130,.15);color:#7ec4a8;border:1px solid rgba(77,168,130,.2)">20%</span>
+          <span class="dom-acc-name">Claude Code Configuration &amp; Workflows</span>
           <i class="ti ti-chevron-down dom-chevron" aria-hidden="true"></i>
         </div>
-        <div class="dom-deep-body">
-          <p style="margin-bottom:.75rem"><strong>O que estudar:</strong> Hierarquia de CLAUDE.md files, slash commands customizados, Agent Skills com SKILL.md frontmatter, plan mode e quando usá-lo, integração com CI/CD pipelines, Message Batches API para processamento em volume.</p>
-          <p style="margin-bottom:.75rem"><strong>Conceitos-chave:</strong> Como configurar Claude Code para times. Diferença entre plan mode e execução direta. Hooks e permissões. Gestão de contexto em sessões longas.</p>
+        <div class="dom-acc-body">
+          <p><strong>O que estudar:</strong> Hierarquia de CLAUDE.md files, slash commands customizados, Agent Skills com SKILL.md frontmatter, plan mode e quando usá-lo, integração com CI/CD pipelines, Message Batches API para processamento em volume.</p>
+          <p><strong>Conceitos-chave:</strong> Como configurar Claude Code para times. Diferença entre plan mode e execução direta. Hooks e permissões. Gestão de contexto em sessões longas.</p>
           <p><strong>Recurso principal:</strong> "Claude Code in Action" + "Introduction to Agent Skills" no Skilljar.</p>
         </div>
       </div>
-      <div class="dom-deep-card">
-        <div class="dom-deep-head" onclick="togDom(this)">
-          <div class="dom-accent" style="background:#EF9F27"></div>
-          <span class="dom-deep-badge" style="background:#FAEEDA;color:#854F0B">20%</span>
-          <span class="dom-deep-name">Prompt Engineering &amp; Structured Output</span>
+      <div class="dom-acc-card">
+        <div class="dom-acc-head" onclick="togDom(this)">
+          <span class="dom-acc-badge" style="background:rgba(201,146,62,.15);color:#d4aa78;border:1px solid rgba(201,146,62,.2)">20%</span>
+          <span class="dom-acc-name">Prompt Engineering &amp; Structured Output</span>
           <i class="ti ti-chevron-down dom-chevron" aria-hidden="true"></i>
         </div>
-        <div class="dom-deep-body">
-          <p style="margin-bottom:.75rem"><strong>O que estudar:</strong> System prompt engineering (princípios vs condicionais, dilution, few-shot examples), JSON schema enforcement, Pydantic para validação, chain-of-thought, validation loops para saídas críticas.</p>
-          <p style="margin-bottom:.75rem"><strong>Conceitos-chave:</strong> Quando usar few-shot vs zero-shot. Como estruturar system prompts sem diluição. Enforcement de schema. Reduzir false positives em pipelines de classificação.</p>
+        <div class="dom-acc-body">
+          <p><strong>O que estudar:</strong> System prompt engineering (princípios vs condicionais, dilution, few-shot examples), JSON schema enforcement, Pydantic para validação, chain-of-thought, validation loops para saídas críticas.</p>
+          <p><strong>Conceitos-chave:</strong> Quando usar few-shot vs zero-shot. Como estruturar system prompts sem diluição. Enforcement de schema sem repetir "responda apenas em JSON". Reduzir false positives em pipelines de classificação.</p>
           <p><strong>Recurso principal:</strong> "Building with the Claude API" + docs de structured outputs.</p>
         </div>
       </div>
-      <div class="dom-deep-card">
-        <div class="dom-deep-head" onclick="togDom(this)">
-          <div class="dom-accent" style="background:#378ADD"></div>
-          <span class="dom-deep-badge" style="background:#E6F1FB;color:#185FA5">18%</span>
-          <span class="dom-deep-name">Tool Design &amp; MCP Integration</span>
+      <div class="dom-acc-card">
+        <div class="dom-acc-head" onclick="togDom(this)">
+          <span class="dom-acc-badge" style="background:rgba(74,143,212,.15);color:#94b8d8;border:1px solid rgba(74,143,212,.2)">18%</span>
+          <span class="dom-acc-name">Tool Design &amp; MCP Integration</span>
           <i class="ti ti-chevron-down dom-chevron" aria-hidden="true"></i>
         </div>
-        <div class="dom-deep-body">
-          <p style="margin-bottom:.75rem"><strong>O que estudar:</strong> MCP primitives (tools, resources, prompts), trust model, configuração de transporte (SSE, stdio), tool description best practices, structured error responses, distribuição de ferramentas entre agents, MCP Advanced Topics.</p>
-          <p style="margin-bottom:.75rem"><strong>Conceitos-chave:</strong> Como escrever tool descriptions que o modelo interpreta corretamente. Quando um tool deve retornar erro vs tentar resolver. Sampling, notifications, capability negotiation.</p>
+        <div class="dom-acc-body">
+          <p><strong>O que estudar:</strong> MCP primitives (tools, resources, prompts), trust model, configuração de transporte (SSE, stdio), tool description best practices, structured error responses, distribuição de ferramentas entre agents.</p>
+          <p><strong>Conceitos-chave:</strong> Como escrever tool descriptions que o modelo interpreta corretamente. Quando um tool deve retornar erro vs tentar resolver. Sampling, notifications, capability negotiation.</p>
           <p><strong>Recurso principal:</strong> "Introduction to MCP" e "MCP: Advanced Topics" no Skilljar.</p>
         </div>
       </div>
-      <div class="dom-deep-card">
-        <div class="dom-deep-head" onclick="togDom(this)">
-          <div class="dom-accent" style="background:#D4537E"></div>
-          <span class="dom-deep-badge" style="background:#FBEAF0;color:#993556">15%</span>
-          <span class="dom-deep-name">Context Management &amp; Reliability</span>
+      <div class="dom-acc-card">
+        <div class="dom-acc-head" onclick="togDom(this)">
+          <span class="dom-acc-badge" style="background:rgba(196,94,138,.15);color:#d488aa;border:1px solid rgba(196,94,138,.2)">15%</span>
+          <span class="dom-acc-name">Context Management &amp; Reliability</span>
           <i class="ti ti-chevron-down dom-chevron" aria-hidden="true"></i>
         </div>
-        <div class="dom-deep-body">
-          <p style="margin-bottom:.75rem"><strong>O que estudar:</strong> Context window limits, estratégias de prompt caching, RAG patterns, como estruturar informação em contextos longos, escalation paths, graceful degradation, handoff design para customer support.</p>
-          <p style="margin-bottom:.75rem"><strong>Conceitos-chave:</strong> Quando usar cache vs não. Como evitar "attention dilution" em revisões de arquivos grandes. Retries vs fail. Quando escalar para humano vs resolver autonomamente.</p>
+        <div class="dom-acc-body">
+          <p><strong>O que estudar:</strong> Context window limits, estratégias de prompt caching, RAG patterns, como estruturar informação em contextos longos, escalation paths, graceful degradation, handoff design para customer support.</p>
+          <p><strong>Conceitos-chave:</strong> Quando usar cache vs não. Como evitar "attention dilution" em revisões de arquivos grandes. Retries vs fail. Quando escalar para humano vs resolver autonomamente.</p>
           <p><strong>Recurso principal:</strong> "AI Capabilities and Limitations" + docs de prompt caching.</p>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- RESOURCES -->
-  <div id="panel-resources" class="panel">
+  <section id="panel-resources" class="panel">
     <div class="res-section">
-      <div class="res-sect-lbl"><i class="ti ti-school" aria-hidden="true"></i>Anthropic Academy (oficial)</div>
+      <div class="res-head"><i class="ti ti-school" aria-hidden="true"></i>Anthropic Academy — cursos oficiais</div>
       <div class="res-grid">
         <div class="res-card">
           <div class="res-name">Building with the Claude API</div>
-          <div class="res-desc">8h — tool calling, streaming, structured output, RAG, agentic patterns. Curso principal.</div>
+          <div class="res-desc">8h — tool calling, streaming, structured output, RAG, agentic patterns. Curso principal para o exame.</div>
           <a class="res-link" href="https://anthropic.skilljar.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>anthropic.skilljar.com</a>
         </div>
         <div class="res-card">
@@ -289,22 +707,22 @@
       </div>
     </div>
     <div class="res-section">
-      <div class="res-sect-lbl"><i class="ti ti-brand-github" aria-hidden="true"></i>Comunidade</div>
+      <div class="res-head"><i class="ti ti-brand-github" aria-hidden="true"></i>Comunidade</div>
       <div class="res-grid">
         <div class="res-card">
           <div class="res-name">Community Study Guide (daronyondem)</div>
-          <div class="res-desc">Cheatsheet, estratégia de estudo e links para docs oficiais. PDF e EPUB disponíveis.</div>
+          <div class="res-desc">Cheatsheet completo, estratégia de estudo e links para docs oficiais. PDF e EPUB disponíveis.</div>
           <a class="res-link" href="https://github.com/daronyondem/claude-architect-exam-guide" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Ver no GitHub</a>
         </div>
         <div class="res-card">
           <div class="res-name">Study materials (paullarionov)</div>
-          <div class="res-desc">Exercícios práticos por domínio: tool design, MCP, structured output, context management.</div>
+          <div class="res-desc">Exercícios práticos por domínio: tool design, MCP integration, structured output, context management.</div>
           <a class="res-link" href="https://github.com/paullarionov/claude-certified-architect" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Ver no GitHub</a>
         </div>
       </div>
     </div>
     <div class="res-section">
-      <div class="res-sect-lbl"><i class="ti ti-book" aria-hidden="true"></i>Guias &amp; docs</div>
+      <div class="res-head"><i class="ti ti-file-text" aria-hidden="true"></i>Guias &amp; documentação</div>
       <div class="res-grid">
         <div class="res-card">
           <div class="res-name">claudecertificationguide.com</div>
@@ -313,96 +731,143 @@
         </div>
         <div class="res-card">
           <div class="res-name">docs.anthropic.com</div>
-          <div class="res-desc">Fonte primária: Agent SDK, MCP, prompt caching, structured outputs, tool use.</div>
+          <div class="res-desc">Fonte primária: Agent SDK, MCP, prompt caching, structured outputs, tool use. Leia junto com os cursos.</div>
           <a class="res-link" href="https://docs.anthropic.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>docs.anthropic.com</a>
         </div>
       </div>
     </div>
     <div class="tip tip-green">
-      <div class="tip-lbl">Dica de estudo</div>
-      <div class="tip-txt">O exame é criado pela mesma equipe que escreve a documentação e os cursos do Skilljar. Entender o <em>porquê</em> das arquiteturas — não memorizar sintaxe — é o que diferencia quem passa. Construa pelo menos um projeto real tocando 3 domínios diferentes.</div>
+      <i class="ti ti-bulb tip-icon" aria-hidden="true"></i>
+      <div>
+        <div class="tip-lbl">Dica de estudo</div>
+        <div class="tip-txt">O exame é criado pela mesma equipe que escreve a documentação e os cursos do Skilljar. Entender o <em>porquê</em> das arquiteturas — não memorizar sintaxe — é o que diferencia quem passa. Construa pelo menos um projeto real tocando 3 domínios diferentes.</div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <!-- MOCKS -->
-  <div id="panel-mocks" class="panel">
+  <section id="panel-mocks" class="panel">
+    <p class="sect-lbl">Recursos de prática</p>
     <div class="mock-list">
       <div class="mock-card">
-        <div class="mock-icon-wrap" style="background:#E6F1FB"><i class="ti ti-star" style="font-size:16px;color:#185FA5" aria-hidden="true"></i></div>
+        <div class="mock-icon-wrap" style="background:rgba(201,146,62,.12)"><i class="ti ti-star" style="color:var(--accent)" aria-hidden="true"></i></div>
         <div>
           <div class="mock-ttl">Anthropic Academy — Practice Exam oficial</div>
           <div class="mock-desc">Cobre os mesmos cenários e estilo do exame real, com explicações após cada resposta. Prioridade máxima.</div>
-          <span class="free"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i>Gratuito</span>
-          <a class="res-link" style="margin-top:8px;display:inline-flex" href="https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar via Skilljar</a>
+          <span class="badge-free"><i class="ti ti-check" aria-hidden="true"></i>Gratuito</span>
+          <a class="res-link" style="margin-top:10px;display:inline-flex" href="https://anthropic.skilljar.com/claude-certified-architect-foundations-access-request" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar via Skilljar</a>
         </div>
       </div>
       <div class="mock-card">
-        <div class="mock-icon-wrap" style="background:#EAF3DE"><i class="ti ti-browser" style="font-size:16px;color:#3B6D11" aria-hidden="true"></i></div>
+        <div class="mock-icon-wrap" style="background:rgba(77,168,130,.12)"><i class="ti ti-browser" style="color:var(--green)" aria-hidden="true"></i></div>
         <div>
           <div class="mock-ttl">claudecertificationguide.com — Mock exams</div>
           <div class="mock-desc">Mock exams alinhados aos 5 domínios, com diagnóstico por área. 150+ questões no total.</div>
-          <span class="free"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i>Gratuito</span>
-          <a class="res-link" style="margin-top:8px;display:inline-flex" href="https://claudecertificationguide.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
+          <span class="badge-free"><i class="ti ti-check" aria-hidden="true"></i>Gratuito</span>
+          <a class="res-link" style="margin-top:10px;display:inline-flex" href="https://claudecertificationguide.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
         </div>
       </div>
       <div class="mock-card">
-        <div class="mock-icon-wrap" style="background:#EAF3DE"><i class="ti ti-browser" style="font-size:16px;color:#3B6D11" aria-hidden="true"></i></div>
+        <div class="mock-icon-wrap" style="background:rgba(77,168,130,.12)"><i class="ti ti-browser" style="color:var(--green)" aria-hidden="true"></i></div>
         <div>
           <div class="mock-ttl">claudecertifications.com — 25 questões por domínio</div>
           <div class="mock-desc">Questões com explicações detalhadas, organizadas pelos 5 domínios. Ótimo para revisar áreas específicas.</div>
-          <span class="free"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i>Gratuito</span>
-          <a class="res-link" style="margin-top:8px;display:inline-flex" href="https://claudecertifications.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
+          <span class="badge-free"><i class="ti ti-check" aria-hidden="true"></i>Gratuito</span>
+          <a class="res-link" style="margin-top:10px;display:inline-flex" href="https://claudecertifications.com" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
         </div>
       </div>
       <div class="mock-card">
-        <div class="mock-icon-wrap" style="background:#EAF3DE"><i class="ti ti-browser" style="font-size:16px;color:#3B6D11" aria-hidden="true"></i></div>
+        <div class="mock-icon-wrap" style="background:rgba(77,168,130,.12)"><i class="ti ti-browser" style="color:var(--green)" aria-hidden="true"></i></div>
         <div>
           <div class="mock-ttl">certsafari.com — 621 questões estilo exame</div>
           <div class="mock-desc">Banco com 621 questões, notas privadas por questão, prática mista de todos os tópicos.</div>
-          <span class="free"><i class="ti ti-check" style="font-size:10px" aria-hidden="true"></i>Gratuito</span>
-          <a class="res-link" style="margin-top:8px;display:inline-flex" href="https://www.certsafari.com/anthropic/claude-certified-architect" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
+          <span class="badge-free"><i class="ti ti-check" aria-hidden="true"></i>Gratuito</span>
+          <a class="res-link" style="margin-top:10px;display:inline-flex" href="https://www.certsafari.com/anthropic/claude-certified-architect" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Acessar</a>
         </div>
       </div>
       <div class="mock-card">
-        <div class="mock-icon-wrap" style="background:#FAEEDA"><i class="ti ti-brand-udemy" style="font-size:16px;color:#854F0B" aria-hidden="true"></i></div>
+        <div class="mock-icon-wrap" style="background:rgba(201,146,62,.12)"><i class="ti ti-brand-udemy" style="color:var(--amber)" aria-hidden="true"></i></div>
         <div>
           <div class="mock-ttl">Udemy — Claude Certified Architect Practice Tests</div>
           <div class="mock-desc">60 questões baseadas em cenários reais: support agents, research pipelines, CI/CD, structured extraction. Scoring por domínio.</div>
-          <span class="paid"><i class="ti ti-credit-card" style="font-size:10px" aria-hidden="true"></i>Pago (Udemy)</span>
-          <a class="res-link" style="margin-top:8px;display:inline-flex" href="https://www.udemy.com/course/claude-certified-architect-certification-practice-tests/" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Ver no Udemy</a>
+          <span class="badge-paid"><i class="ti ti-credit-card" aria-hidden="true"></i>Pago (Udemy)</span>
+          <a class="res-link" style="margin-top:10px;display:inline-flex" href="https://www.udemy.com/course/claude-certified-architect-certification-practice-tests/" target="_blank"><i class="ti ti-external-link" aria-hidden="true"></i>Ver no Udemy</a>
         </div>
       </div>
     </div>
-    <div class="tip tip-amber" style="margin-top:1rem">
-      <div class="tip-lbl">Estratégia de mock</div>
-      <div class="tip-txt">Semana 1–2: foque em questões por domínio para identificar lacunas. Semana 3: mocks completos cronometrados (120 min). Semana 4: revisão das questões erradas + prática focada nos domínios mais fracos. Meta: atingir ≥80% nos mocks antes do exame real (pass é 72%).</div>
+    <div class="tip tip-amber" style="margin-top:1.25rem">
+      <i class="ti ti-target tip-icon" aria-hidden="true"></i>
+      <div>
+        <div class="tip-lbl">Estratégia de mock</div>
+        <div class="tip-txt">Semana 1–2: foque em questões por domínio para identificar lacunas. Semana 3: mocks completos cronometrados (120 min). Semana 4: revisão das questões erradas + prática focada nos domínios mais fracos. Meta: atingir ≥80% nos mocks antes do exame real (pass é 72%).</div>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
+
+</main>
+
+<footer>
+  Guia não oficial — conteúdo baseado na documentação pública da Anthropic e recursos da comunidade.
+</footer>
 
 <script>
-const wkData={1:{title:"Semana 1 — Fundamentos da API & Prompt Engineering",days:[{l:"Seg",t:"Curso 'Building with the Claude API' (partes 1–3): tool calling, streaming, autenticação",p:"conceito"},{l:"Ter",t:"Curso 'Building with the Claude API' (partes 4–6): RAG, structured output, JSON schema com Pydantic",p:"conceito"},{l:"Qua",t:"Hands-on: construa um classificador de tickets com saída JSON e validação de schema",p:"hands"},{l:"Qui",t:"Prompt Engineering: system prompts, few-shot examples, chain-of-thought, prompt dilution",p:"conceito"},{l:"Sex",t:"Hands-on: escreva 5 system prompts para cenários distintos e teste a consistência das saídas",p:"hands"},{l:"Sáb",t:"Mock por domínio: Prompt Engineering & Structured Output (certsafari ou claudecertifications)",p:"mock"},{l:"Dom",t:"Revisão dos erros do mock. Releia as seções da doc oficial sobre os tópicos com mais erro",p:"revisao"}]},2:{title:"Semana 2 — MCP & Agentic Architecture",days:[{l:"Seg",t:"Curso 'Introduction to Model Context Protocol': tools, resources, prompts, trust model",p:"conceito"},{l:"Ter",t:"Curso 'MCP: Advanced Topics': sampling, notifications, transport (SSE vs stdio), capability negotiation",p:"conceito"},{l:"Qua",t:"Hands-on: construa um MCP server simples com 2 tools (ex: busca em arquivo + query em DB)",p:"hands"},{l:"Qui",t:"Curso 'Introduction to Subagents': agentic loop lifecycle, coordinator-subagent, hook interception",p:"conceito"},{l:"Sex",t:"Hands-on: construa um agente multi-step com tool use real e controle de stop_reason",p:"hands"},{l:"Sáb",t:"Mock por domínio: Tool Design & MCP (18%) + Agentic Architecture (27%)",p:"mock"},{l:"Dom",t:"Revisão. Leia o guia da comunidade (daronyondem) — seção MCP e Agentic",p:"revisao"}]},3:{title:"Semana 3 — Claude Code, Context Management & Confiabilidade",days:[{l:"Seg",t:"Curso 'Claude Code in Action': CLAUDE.md hierarchy, plan mode, hooks, permissões",p:"conceito"},{l:"Ter",t:"Curso 'Introduction to Agent Skills': SKILL.md frontmatter, Agent Skills, CI/CD integration",p:"conceito"},{l:"Qua",t:"Hands-on: configure Claude Code para um projeto fictício com CLAUDE.md, custom slash command e MCP server",p:"hands"},{l:"Qui",t:"Context Management: prompt caching, context window limits, RAG patterns, attention dilution",p:"conceito"},{l:"Sex",t:"Reliability & Escalation: retry vs fail, graceful degradation, escalation paths, handoff design",p:"conceito"},{l:"Sáb",t:"Mock completo cronometrado (60 questões / 120 min) — claudecertificationguide.com",p:"mock"},{l:"Dom",t:"Revisão detalhada do mock. Mapeie domínios com menor performance. Releia docs específicas.",p:"revisao"}]},4:{title:"Semana 4 — Revisão final & simulados",days:[{l:"Seg",t:"Releitura rápida dos cheatsheets: GitHub (daronyondem) + claudecertifications.com exam guide",p:"revisao"},{l:"Ter",t:"Mock completo cronometrado #2 — Udemy ou certsafari (621 questões, modo misto)",p:"mock"},{l:"Qua",t:"Revisão focada nos 2 domínios com pior desempenho nos mocks anteriores",p:"revisao"},{l:"Qui",t:"Practice Exam oficial da Anthropic Academy — simule condições reais do exame",p:"mock"},{l:"Sex",t:"Revisão das questões erradas no oficial. Revise cenários: customer support agent, multi-agent research, CI/CD",p:"revisao"},{l:"Sáb",t:"Último mock cronometrado + revisão leve. Foco em domínios com ≥80% — não mude o que está certo",p:"mock"},{l:"Dom",t:"Descanso. Revise apenas o cheatsheet rápido. Durma bem antes do exame.",p:"revisao"}]}};
+const wkData={
+  1:{head:"Semana 1 — Fundamentos da API & Prompt Engineering",days:[
+    {l:"Seg",t:"Curso 'Building with the Claude API' (partes 1–3): tool calling, streaming, autenticação",p:"conceito"},
+    {l:"Ter",t:"Curso 'Building with the Claude API' (partes 4–6): RAG, structured output, JSON schema com Pydantic",p:"conceito"},
+    {l:"Qua",t:"Hands-on: construa um classificador de tickets com saída JSON e validação de schema",p:"hands"},
+    {l:"Qui",t:"Prompt Engineering: system prompts, few-shot examples, chain-of-thought, prompt dilution",p:"conceito"},
+    {l:"Sex",t:"Hands-on: escreva 5 system prompts para cenários distintos e teste a consistência das saídas",p:"hands"},
+    {l:"Sáb",t:"Mock por domínio: Prompt Engineering & Structured Output (certsafari ou claudecertifications)",p:"mock"},
+    {l:"Dom",t:"Revisão dos erros do mock. Releia as seções da doc oficial sobre os tópicos com mais erro",p:"revisao"}
+  ]},
+  2:{head:"Semana 2 — MCP & Agentic Architecture",days:[
+    {l:"Seg",t:"Curso 'Introduction to Model Context Protocol': tools, resources, prompts, trust model",p:"conceito"},
+    {l:"Ter",t:"Curso 'MCP: Advanced Topics': sampling, notifications, transport (SSE vs stdio), capability negotiation",p:"conceito"},
+    {l:"Qua",t:"Hands-on: construa um MCP server simples com 2 tools (ex: busca em arquivo + query em DB)",p:"hands"},
+    {l:"Qui",t:"Curso 'Introduction to Subagents': agentic loop lifecycle, coordinator-subagent, hook interception",p:"conceito"},
+    {l:"Sex",t:"Hands-on: construa um agente multi-step com tool use real e controle de stop_reason",p:"hands"},
+    {l:"Sáb",t:"Mock por domínio: Tool Design & MCP (18%) + Agentic Architecture (27%)",p:"mock"},
+    {l:"Dom",t:"Revisão. Leia o guia da comunidade (daronyondem) — seção MCP e Agentic",p:"revisao"}
+  ]},
+  3:{head:"Semana 3 — Claude Code, Context Management & Confiabilidade",days:[
+    {l:"Seg",t:"Curso 'Claude Code in Action': CLAUDE.md hierarchy, plan mode, hooks, permissões",p:"conceito"},
+    {l:"Ter",t:"Curso 'Introduction to Agent Skills': SKILL.md frontmatter, Agent Skills, CI/CD integration",p:"conceito"},
+    {l:"Qua",t:"Hands-on: configure Claude Code para um projeto fictício com CLAUDE.md, custom slash command e MCP server",p:"hands"},
+    {l:"Qui",t:"Context Management: prompt caching, context window limits, RAG patterns, attention dilution",p:"conceito"},
+    {l:"Sex",t:"Reliability & Escalation: retry vs fail, graceful degradation, escalation paths, handoff design",p:"conceito"},
+    {l:"Sáb",t:"Mock completo cronometrado (60 questões / 120 min) — claudecertificationguide.com",p:"mock"},
+    {l:"Dom",t:"Revisão detalhada do mock. Mapeie domínios com menor performance. Releia docs específicas.",p:"revisao"}
+  ]},
+  4:{head:"Semana 4 — Revisão final & simulados",days:[
+    {l:"Seg",t:"Releitura rápida dos cheatsheets: GitHub (daronyondem) + claudecertifications.com exam guide",p:"revisao"},
+    {l:"Ter",t:"Mock completo cronometrado #2 — Udemy ou certsafari (621 questões, modo misto)",p:"mock"},
+    {l:"Qua",t:"Revisão focada nos 2 domínios com pior desempenho nos mocks anteriores",p:"revisao"},
+    {l:"Qui",t:"Practice Exam oficial da Anthropic Academy — simule condições reais do exame",p:"mock"},
+    {l:"Sex",t:"Revisão das questões erradas no oficial. Revise cenários: customer support agent, multi-agent research, CI/CD",p:"revisao"},
+    {l:"Sáb",t:"Último mock cronometrado + revisão leve. Foco em domínios com ≥80% — não mude o que está certo",p:"mock"},
+    {l:"Dom",t:"Descanso. Revise apenas o cheatsheet rápido. Durma bem antes do exame.",p:"revisao"}
+  ]}
+};
 const pLabels={conceito:"Conceito",hands:"Hands-on",mock:"Mock",revisao:"Revisão"};
 
 function selWk(n){
-  [1,2,3,4].forEach(i=>{
-    document.getElementById('wk'+i).classList.toggle('sel',i===n);
-  });
+  [1,2,3,4].forEach(i=>document.getElementById('wk'+i).classList.toggle('sel',i===n));
   const d=wkData[n];
-  document.getElementById('wk-ttl').textContent=d.title;
+  document.getElementById('wk-head').textContent=d.head;
   document.getElementById('wk-days').innerHTML=d.days.map(x=>`
     <div class="day-row">
       <span class="day-lbl">${x.l}</span>
       <span class="day-txt">${x.t}<span class="pill p-${x.p}">${pLabels[x.p]}</span></span>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function showP(name,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   btn.classList.add('active');
+  window.scrollTo({top:document.querySelector('.nav-wrap').offsetTop,behavior:'smooth'});
 }
 
 function togDom(head){
@@ -414,3 +879,5 @@ function togDom(head){
 
 selWk(1);
 </script>
+</body>
+</html>
